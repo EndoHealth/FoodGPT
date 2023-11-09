@@ -4,6 +4,7 @@ import { palette } from 'common/styles';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { resultState, imageState } from 'recoil/atoms';
+import { insertEmailToSupabase } from 'utils/supabase';
 
 const Result = () => {
 	const router = useRouter();
@@ -11,6 +12,7 @@ const Result = () => {
 	const [image, setImage] = useRecoilState(imageState);
 	const [hasEmail, setHasEmail] = useState<boolean>(true);
 	const [email, setEmail] = useState<string>('');
+	const [isSaved, setIsSaved] = useState<boolean>(true);
 
 	useEffect(() => {
 		if (!!localStorage.getItem('email')) {
@@ -24,14 +26,14 @@ const Result = () => {
 	const handleEmailSubmit = () => {
 		setHasEmail(true);
 		localStorage.setItem('email', email);
+		insertEmailToSupabase(email);
 	};
 
 	const handleSaveResults = () => {
 		alert('hi!');
 
 		// send email
-
-		router.push('/');
+		setIsSaved(true);
 	};
 
 	return (
@@ -56,6 +58,22 @@ const Result = () => {
 			<HoverButton onClick={() => handleSaveResults()}>
 				Save Results
 			</HoverButton>
+			{isSaved && (
+				<SaveModalContainer onClick={(e) => e.stopPropagation()}>
+					<SaveModalInner>
+						<SaveModalText>Results Sent to Email!</SaveModalText>
+						<SaveImage src={'/check.png'} alt="" />
+						<SaveModalButton
+							onClick={() => {
+								setIsSaved(false);
+								router.push('/');
+							}}
+						>
+							Dismiss
+						</SaveModalButton>
+					</SaveModalInner>
+				</SaveModalContainer>
+			)}
 		</Div>
 	);
 };
@@ -88,8 +106,8 @@ const ModalText = styled.p`
 	font-family: 'Pretendard';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 2%.5;
-	line-height: 2%.5;
+	font-size: 2.5rem;
+	line-height: 2.5rem;
 	text-align: center;
 	color: ${palette.black};
 	margin-bottom: 1rem;
@@ -194,4 +212,63 @@ const HoverButton = styled.button`
 		width: calc(100% - 40px);
 		left: 20px;
 	}
+`;
+const SaveModalContainer = styled.div`
+	position: fixed;
+	width: 100%;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 999;
+`;
+const SaveModalInner = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 300px;
+	height: 300px;
+	top: calc(50%-150px);
+	left: calc(50%-150px);
+	background-color: ${palette.grey[200]};
+	border-radius: 1rem;
+	padding: 20px;
+	z-index: 1000;
+`;
+const SaveModalText = styled.p`
+	font-family: 'Pretendard';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.5rem;
+	line-height: 1.5rem;
+	text-align: center;
+	color: ${palette.black};
+	margin-bottom: 20px;
+`;
+const SaveImage = styled.img`
+	width: 100px;
+	height: 100px;
+	object-fit: contain;
+	margin-bottom: 20px;
+`;
+const SaveModalButton = styled.button`
+	width: calc(100% - 40px);
+	height: 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	border: none;
+	background-color: ${palette.brand.primary};
+	color: white;
+	cursor: pointer;
+	border-radius: 0.5rem;
+	font-size: 1rem;
+	font-weight: 400;
 `;
