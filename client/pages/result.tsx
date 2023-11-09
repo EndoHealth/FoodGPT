@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { resultState, imageState } from 'recoil/atoms';
 import { insertEmailToSupabase } from 'utils/supabase';
+import { saveEmail, sendEmail, viewResult } from 'utils';
 
 const Result = () => {
 	const router = useRouter();
@@ -15,6 +16,8 @@ const Result = () => {
 	const [isSaved, setIsSaved] = useState<boolean>(true);
 
 	useEffect(() => {
+		viewResult(result);
+
 		if (!!localStorage.getItem('email')) {
 			setHasEmail(true);
 			setEmail(localStorage.getItem('email'));
@@ -25,6 +28,7 @@ const Result = () => {
 
 	const handleEmailSubmit = () => {
 		setHasEmail(true);
+		saveEmail();
 		localStorage.setItem('email', email);
 		insertEmailToSupabase(email);
 	};
@@ -33,6 +37,7 @@ const Result = () => {
 		alert('hi!');
 
 		// send email
+		sendEmail(email);
 		setIsSaved(true);
 	};
 

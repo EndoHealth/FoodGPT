@@ -19,3 +19,27 @@ export const viewHome = () => {
 	setUserProperties();
 	window.gtag('event', 'view_home', {});
 };
+
+export const uploadPhotoInit = () => {
+	window.gtag('event', 'upload_photo_init', {});
+};
+
+export const uploadPhotoSuccess = () => {
+	window.gtag('event', 'upload_photo_success', {});
+};
+
+export const uploadPhotoFailure = () => {
+	window.gtag('event', 'upload_photo_failure', {});
+};
+
+export const saveEmail = () => {
+	window.gtag('event', 'save_email', {});
+};
+
+export const viewResult = (result) => {
+	window.gtag('event', 'view_result', { result: result });
+};
+
+export const sendEmail = (email) => {
+	window.gtag('event', 'send_email', { email: email });
+};

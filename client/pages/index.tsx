@@ -7,6 +7,12 @@ import { Footer } from 'components';
 import { imageState, resultState } from 'recoil/atoms';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
+import {
+	uploadPhotoFailure,
+	uploadPhotoInit,
+	uploadPhotoSuccess,
+	viewHome,
+} from 'utils';
 
 const index = () => {
 	const router = useRouter();
@@ -33,17 +39,24 @@ const index = () => {
 	};
 
 	useEffect(() => {
+		viewHome();
+	}, []);
+
+	useEffect(() => {
 		if (!image) return;
 		setLoading(true);
+		uploadPhotoInit();
 
 		axios
 			.post(`${API_URL}/vision`, { image })
 			.then((res) => {
 				setLoading(false);
 				setResult(res.data);
+				uploadPhotoSuccess();
 				router.push('/result');
 			})
 			.catch((err) => {
+				uploadPhotoFailure();
 				console.error(err);
 			});
 	}, [image]);
