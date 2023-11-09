@@ -1,5 +1,4 @@
-import { SES } from 'aws-sdk';
-import { SendEmailRequest } from 'aws-sdk/clients/ses';
+import SES, { SendEmailRequest } from 'aws-sdk/clients/ses';
 
 export class MailService {
   private ses: SES;
@@ -29,7 +28,7 @@ export class MailService {
           Data: subject,
         },
       },
-      Source: process.env.SES_EMAIL_SOURCE,
+      Source: "noreply@huisangyun.com"
     };
 
     await this.ses.sendEmail(params).promise();

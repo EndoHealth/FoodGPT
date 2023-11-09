@@ -3,9 +3,8 @@ import OpenAI from 'openai';
 const openai = new OpenAI();
 
 export async function VisionService(req, res) {
-	const { photo } = req.body;
-	console.log(`DEBUG: VisionService init ${photo}`);
-	// const { image_url } = req.body;
+	const { image } = req.body;
+	console.log(`DEBUG: VisionService init ${image.substring(0, 10)}`);
 
 	const response = await openai.chat.completions.create({
 		model: 'gpt-4-vision-preview',
@@ -20,7 +19,7 @@ export async function VisionService(req, res) {
 					{
 						type: 'image_url',
 						image_url: {
-							url: photo,
+							"url": image,
 						},
 					},
 				],
@@ -32,5 +31,6 @@ export async function VisionService(req, res) {
 	const result = response.choices[0];
 	const message = result.message.content;
 
+	console.log(`DEBUG: VisionService response ${message.substring(0, 10)}`);
 	res.send(message);
 }
