@@ -1,21 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import { GITHUB_URL, TWITTER_URL } from 'environment';
 
 export const Footer = ({ color }: { color?: string }) => {
 	const router = useRouter();
 
 	return (
 		<Div color={color}>
-			<FooterItem
-				onClick={() =>
-					(window.location.href = 'mailto:huisang.growth@gmail.com')
-				}
-			>
-				<Text>contact</Text>
+			<FooterItem>
+				<a href={TWITTER_URL} target="_blank">
+					<Icon src="/twitter.png" alt="twitter" />
+				</a>
 			</FooterItem>
 			<Text>|</Text>
-			<Text weight="600">all rights reserved</Text>
+			<FooterItem>
+				<a href={GITHUB_URL} target="_blank">
+					<Icon src="/github.png" alt="github" />
+				</a>
+			</FooterItem>
 		</Div>
 	);
 };
@@ -39,7 +42,7 @@ const Text = styled.p<{ weight?: string }>`
 	font-style: normal;
 	font-weight: 400;
 	font-weight: ${({ weight }) => weight || '400'};
-	font-size: 12px;
+	font-size: 4rem;
 	line-height: 14px;
 
 	text-align: center;
@@ -57,4 +60,13 @@ const FooterItem = styled.div`
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
+`;
+const Icon = styled.img`
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 3rem;
+	height: 3rem;
+	object-fit: contain;
 `;

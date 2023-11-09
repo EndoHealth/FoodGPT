@@ -3,13 +3,18 @@ import styled from 'styled-components';
 import { palette } from 'common/styles';
 import axios from 'axios';
 import { API_URL } from 'environment';
+import { Footer } from 'components';
+import { imageState, resultState } from 'recoil/atoms';
+import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 
 const index = () => {
-	const [email, setEmail] = useState('');
-	const [photo, setPhoto] = useState(null);
-	const [result, setResult] = useState<string>('');
+	const router = useRouter();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [result, setResult] = useRecoilState(resultState);
+	const [image, setImage] = useRecoilState(imageState);
 
-	const handlePhotoClick = () => {
+	const handleImageClick = () => {
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.accept = 'image/*';
@@ -20,7 +25,7 @@ const index = () => {
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
 			reader.onloadend = () => {
-				setPhoto(reader.result);
+				setImage(reader.result);
 			};
 		};
 
@@ -28,33 +33,37 @@ const index = () => {
 	};
 
 	useEffect(() => {
-		if (!photo) return;
-		setResult('');
+		if (!image) return;
+		setLoading(true);
 
 		axios
-			.post(`${API_URL}/vision`, { photo })
+			.post(`${API_URL}/vision`, { image })
 			.then((res) => {
-				console.log(res.data);
+				setLoading(false);
 				setResult(res.data);
+				router.push('/result');
 			})
 			.catch((err) => {
 				console.error(err);
 			});
-	}, [photo]);
+	}, [image]);
 
 	return (
 		<Div>
-			<input
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-			/>
+			<Title>FoodGPT</Title>
+			<Description>Your automated food diary</Description>
 
-			<button onClick={handlePhotoClick}>Add Photo</button>
+			{image ? (
+				<img src={image} alt="Uploaded" width={200} />
+			) : (
+				<ImageButton onClick={handleImageClick}>
+					<img src={'/camera.png'} />
+				</ImageButton>
+			)}
 
-			{photo && <img src={photo} alt="Uploaded" width={200} />}
+			{loading && <LoadingSpinner src={'/loading.gif'} alt="" />}
 
-			{result && <p>{result}</p>}
+			<Footer />
 		</Div>
 	);
 };
@@ -70,4 +79,47 @@ export const Div = styled.div`
 	align-items: center;
 	background-color: white;
 	color: black;
+`;
+const Title = styled.h2`
+	font-family: 'Pretendard';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 2.5rem;
+	line-height: 2.5rem;
+	text-align: center;
+	color: ${palette.black};
+	margin-bottom: 1rem;
+`;
+const Description = styled.p`
+	font-family: 'Pretendard';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.5rem;
+	line-height: 1.5rem;
+	text-align: center;
+	color: ${palette.black};
+	margin-bottom: 1rem;
+`;
+const ImageButton = styled.button`
+	background: transparent;
+	outline: none;
+	border: none;
+	cursor: pointer;
+
+	width: 10rem;
+	height: 10rem;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+`;
+const LoadingSpinner = styled.img`
+	background: transparent;
+	outline: none;
+	border: none;
+	cursor: pointer;
+	width: 2rem;
+	height: 2rem;
 `;
