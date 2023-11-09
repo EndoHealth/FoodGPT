@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"target": "es2020",
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": false,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/modules/*"]
+		},
+		"incremental": true
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["node_modules"],
+	"ts-node": {
+		"esm": true,
+		"require": ["tsconfig-paths/register"]
+	}
+}
