@@ -9,7 +9,7 @@ export async function streamChatCompletion(
 	model: OpenAIChatGPTModel = 'gpt-3.5-turbo',
 	callback: (type: CallbackType, message?: string, error?: any) => void
 ): Promise<void> {
-	const messages: OpenAI.Chat.ChatCompletionMessage[] = [
+	const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
 		...history,
 		{ role: 'user', content: prompt },
 	];

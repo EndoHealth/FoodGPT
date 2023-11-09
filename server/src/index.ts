@@ -5,11 +5,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { ChatStreamService } from '@/chat/chat.stream.service';
 import { ChatStaticService } from '@/chat/chat.static.service';
-import { BrowseService } from '@/browse/browse.service';
+import { VisionService } from '@/vision/vision.service';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(cors());
 
 dotenv.config();
@@ -29,8 +29,8 @@ app.post('/chat/static', function (req, res) {
 	ChatStaticService(req, res);
 });
 
-app.post('/browse', function (req, res) {
-	BrowseService(req, res);
+app.post('/vision', function (req, res) {
+	VisionService(req, res);
 });
 
 server.listen(port, () => {

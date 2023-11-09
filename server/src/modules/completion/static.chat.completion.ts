@@ -6,12 +6,11 @@ dotenv.config();
 export async function staticChatCompletion(
 	prompt: string,
 	model: OpenAIChatGPTModel = 'gpt-3.5-turbo',
-	predefinedChain: OpenAI.Chat.ChatCompletionMessage[] = []
+	predefinedChain: OpenAI.Chat.ChatCompletionMessageParam[] = []
 ) {
 	// console.log(prompt);
-	const messages: OpenAI.Chat.ChatCompletionMessage[] = predefinedChain.concat([
-		{ role: 'user', content: prompt },
-	]);
+	const messages: OpenAI.Chat.ChatCompletionMessageParam[] =
+		predefinedChain.concat([{ role: 'user', content: prompt }]);
 
 	const apiBase = 'https://thingsflow-ai-instance.openai.azure.com';
 	const apiVersion = '2023-07-01-preview';
