@@ -62,9 +62,6 @@ export const Text = styled.p`
 		font-size: 1.5rem;
 	}
 `;
-export const GreenText = styled(Text)`
-	color: ${palette.brand.green};
-`;
 export const WhiteText = styled(Text)`
 	color: ${palette.white};
 `;
