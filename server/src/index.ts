@@ -42,7 +42,7 @@ app.post('/mail', async function (req, res) {
 	const { email, body } = req.body;
 	console.log(email);
 	const mailService = new MailService();
-	await mailService.sendEmail(email, 'test', body);
+	await mailService.sendEmail(email, `Today's Meal Nutrition Breakdown and Insights`, body);
 	res.send('success');
 });
 
