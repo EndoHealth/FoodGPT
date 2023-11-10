@@ -51,13 +51,13 @@ const index = () => {
 		uploadPhotoInit();
 
 		axios
-			.post(`${API_URL}/vision`, { image })
+			.post(`/api/vision`, { image })
 			.then((res) => {
 				setLoading(false);
 				setResult(JSON.stringify(res.data));
 
 				axios
-					.get(`${API_URL}/food/healthy`, {
+					.get(`/api/food`, {
 						params: { message: JSON.stringify(res.data) },
 					})
 					.then((res) => {
