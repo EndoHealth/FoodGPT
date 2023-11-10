@@ -4,7 +4,7 @@ import { palette } from 'common/styles';
 import axios from 'axios';
 import { API_URL } from 'environment';
 import { Footer } from 'components';
-import { imageState, resultState } from 'recoil/atoms';
+import { commentState, imageState, resultState } from 'recoil/atoms';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import {
@@ -19,6 +19,7 @@ const index = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [result, setResult] = useRecoilState(resultState);
 	const [image, setImage] = useRecoilState(imageState);
+	const [comment, setComment] = useRecoilState(commentState);
 
 	const handleImageClick = () => {
 		const input = document.createElement('input');
@@ -40,10 +41,12 @@ const index = () => {
 
 	useEffect(() => {
 		viewHome();
+		setLoading(false);
 	}, []);
 
 	useEffect(() => {
-		if (!image) return;
+		if (!image || image == null) return;
+
 		setLoading(true);
 		uploadPhotoInit();
 
@@ -51,10 +54,18 @@ const index = () => {
 			.post(`${API_URL}/vision`, { image })
 			.then((res) => {
 				setLoading(false);
-				console.log(res.data);
 				setResult(JSON.stringify(res.data));
-				uploadPhotoSuccess();
-				// router.push('/result');
+
+				axios
+					.get(`${API_URL}/food/healthy`, {
+						params: { message: JSON.stringify(res.data) },
+					})
+					.then((res) => {
+						console.log(res.data);
+						setComment(JSON.stringify(res.data));
+						uploadPhotoSuccess();
+						router.push('/result');
+					});
 			})
 			.catch((err) => {
 				uploadPhotoFailure();
@@ -68,7 +79,7 @@ const index = () => {
 			<Description>Your automated food diary</Description>
 
 			{image ? (
-				<img src={image} alt="Uploaded" width={200} />
+				<Image src={image} alt="Uploaded" width={200} />
 			) : (
 				<ImageButton onClick={handleImageClick}>
 					<img src={'/camera.png'} />
@@ -120,13 +131,28 @@ const ImageButton = styled.button`
 	border: none;
 	cursor: pointer;
 
-	width: 10rem;
-	height: 10rem;
+	width: 20rem;
+	height: 20rem;
 
 	img {
 		width: 100%;
 		height: 100%;
 		object-fit: contain;
+	}
+
+	@media (max-width: 800px) {
+		width: calc(100% - 40px);
+		margin: 20px 0;
+	}
+`;
+const Image = styled.img`
+	width: 30rem;
+	height: 30rem;
+	object-fit: contain;
+
+	@media (max-width: 800px) {
+		width: calc(100% - 40px);
+		margin: 20px 0;
 	}
 `;
 const LoadingSpinner = styled.img`

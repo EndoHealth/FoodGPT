@@ -10,7 +10,7 @@ import { blueGrey, red } from '../common/styles/palette';
 import { Footer } from 'components';
 import axios from 'axios';
 import { API_URL } from 'environment';
-import { createEmailBody } from 'utils/postprocessing';
+import { createEmailBody, getRoasted } from 'utils/postprocessing';
 
 const Result = () => {
 	const router = useRouter();
@@ -23,7 +23,6 @@ const Result = () => {
 
 	useEffect(() => {
 		viewResult(result);
-		console.log(result);
 
 		if (!!localStorage.getItem('email')) {
 			setHasEmail(true);
@@ -40,12 +39,16 @@ const Result = () => {
 		insertEmailToSupabase(email);
 	};
 
-	const handleSaveResults = async () => {
-		// send email
-		const body = createEmailBody(result, comment);
-		await axios.post(`${API_URL}/email`, { email, body });
+	const handleSaveResults = () => {
+		if (comment == '' || result == '') return;
+
+		const content = createEmailBody(comment, result);
+
+		// copy content to clipboard
+		navigator.clipboard.writeText(content);
 
 		sendEmail(email);
+		setImage(null);
 		setIsSaved(true);
 	};
 
@@ -58,7 +61,7 @@ const Result = () => {
 
 	const classifyCalorie = (calorie: string) => {
 		if (!calorie || calorie == '') return 'white';
-		console.log(calorie);
+
 		const maxCalories = String(calorie).includes('-')
 			? parseInt(calorie.split('-').pop())
 			: parseInt(calorie);
@@ -84,7 +87,7 @@ const Result = () => {
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 						/>
-						<ModalButton>Submit</ModalButton>
+						<ModalButton type="submit">Submit</ModalButton>
 					</ModalForm>
 				</ModalContainer>
 			)}
@@ -93,7 +96,8 @@ const Result = () => {
 				<>
 					<Title>Comment</Title>
 					<CommentContainer>
-						<CommentText>{comment}</CommentText>
+						<CommentText>{`${getRoasted(JSON.parse(comment).healthy)}
+${JSON.parse(comment).analysis}`}</CommentText>
 					</CommentContainer>
 				</>
 			)}
@@ -120,7 +124,7 @@ const Result = () => {
 			{isSaved && (
 				<SaveModalContainer onClick={(e) => e.stopPropagation()}>
 					<SaveModalInner>
-						<SaveModalText>Results Sent to Email!</SaveModalText>
+						<SaveModalText>Results Copied to Clipboard!</SaveModalText>
 						<SaveImage src={'/check.png'} alt="" />
 						<SaveModalButton
 							onClick={() => {
@@ -206,7 +210,7 @@ const ModalInput = styled.input`
 		width: calc(100% - 40px);
 	}
 `;
-const ModalButton = styled.p`
+const ModalButton = styled.button`
 	width: 400px;
 	height: 40px;
 	display: flex;
@@ -255,9 +259,8 @@ const CommentContainer = styled.div`
 	display: flex;
 	width: calc(100% - 40px);
 	height: auto;
-	min-height: 40px;
 	margin: 10px auto 20px auto;
-	padding: 10px;
+	padding: 20px;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;

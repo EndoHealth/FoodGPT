@@ -1,9 +1,9 @@
-export const getRoasted = (grade: string) => {
-	if (grade.toLowerCase().trim() === 'bad') {
+export const getRoasted = (healthy: string) => {
+	if (healthy.toLowerCase().trim() === 'bad') {
 		return bad_list[Math.floor(Math.random() * bad_list.length)];
-	} else if (grade.toLowerCase().trim() === 'medium') {
+	} else if (healthy.toLowerCase().trim() === 'medium') {
 		return medium_list[Math.floor(Math.random() * medium_list.length)];
-	} else if (grade.toLowerCase().trim() === 'good') {
+	} else if (healthy.toLowerCase().trim() === 'good') {
 		return good_list[Math.floor(Math.random() * good_list.length)];
 	} else {
 		return '';
@@ -78,11 +78,9 @@ const good_list = [
 ];
 
 export const createEmailBody = (comment: string, result: any) => {
-	var commentText = '';
 	const jsonComment = JSON.parse(comment);
-	commentText += getRoasted(jsonComment.grade);
-	commentText += '\n';
-	commentText += jsonComment.comment;
+	var commentText = `${getRoasted(jsonComment.healthy)}
+${jsonComment.analysis}`;
 
 	var ingredientsText = '';
 	const jsonResult = JSON.parse(result);

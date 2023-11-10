@@ -13,39 +13,12 @@ export const isBottomsheetVisibleState = atom<boolean>({
 
 export const resultState = atom<string>({
 	key: 'resultState',
-	default: `{
-    "ingredients": [
-        {
-            "ingredient": "White Rice",
-            "estimated_calories": 200
-        },
-        {
-            "ingredient": "Fried Breaded Meat (possibly pork cutlet or chicken cutlet)",
-            "estimated_calories": "200-400"
-        },
-        {
-            "ingredient": "Potato Salad",
-            "estimated_calories": "140-180 per 100 grams"
-        },
-        {
-            "ingredient": "Stir-fried Vegetables",
-            "estimated_calories": "50-100"
-        },
-        {
-            "ingredient": "Kimchi",
-            "estimated_calories": "20-30 per 100 grams"
-        },
-        {
-            "ingredient": "Pickled or Fermented Side Dish",
-            "estimated_calories": "15-30"
-        }
-    ]
-}`,
+	default: '',
 });
 
 export const commentState = atom<string>({
 	key: 'commentState',
-	default: 'Great meal. You should go for the olympics!',
+	default: '',
 });
 
 export const imageState = atom<any>({
