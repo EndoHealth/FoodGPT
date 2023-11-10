@@ -10,6 +10,7 @@ import { VisionService } from '@/vision/vision.service';
 import { MailService } from '@/mail/mail.service';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { FoodService } from '@/food/food.service';
 
 
 const app = express();
@@ -44,6 +45,10 @@ app.post('/mail', async function (req, res) {
 	const mailService = new MailService();
 	await mailService.sendEmail(email, `Today's Meal Nutrition Breakdown and Insights`, body);
 	res.send('success');
+});
+
+app.get('/food/healthy', function (req, res) {
+	FoodService(req, res);
 });
 
 server.listen(port, () => {
