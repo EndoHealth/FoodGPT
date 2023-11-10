@@ -21,25 +21,31 @@ export const viewHome = () => {
 };
 
 export const uploadPhotoInit = () => {
+	setUserProperties();
 	window.gtag('event', 'upload_photo_init', {});
 };
 
 export const uploadPhotoSuccess = () => {
+	setUserProperties();
 	window.gtag('event', 'upload_photo_success', {});
 };
 
 export const uploadPhotoFailure = () => {
+	setUserProperties();
 	window.gtag('event', 'upload_photo_failure', {});
 };
 
 export const saveEmail = () => {
+	setUserProperties();
 	window.gtag('event', 'save_email', {});
 };
 
 export const viewResult = (result) => {
+	setUserProperties();
 	window.gtag('event', 'view_result', { result: result });
 };
 
 export const sendEmail = (email) => {
+	setUserProperties();
 	window.gtag('event', 'send_email', { email: email });
 };

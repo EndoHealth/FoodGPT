@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { GITHUB_URL, TWITTER_URL } from 'environment';
+import { GITHUB_URL, LINKEDIN_URL, TWITTER_URL } from 'environment';
 
 export const Footer = ({ color }: { color?: string }) => {
 	const router = useRouter();
@@ -11,6 +11,12 @@ export const Footer = ({ color }: { color?: string }) => {
 			<FooterItem>
 				<a href={TWITTER_URL} target="_blank">
 					<Icon src="/twitter.png" alt="twitter" />
+				</a>
+			</FooterItem>
+			<Text>|</Text>
+			<FooterItem>
+				<a href={LINKEDIN_URL} target="_blank">
+					<Icon src="/linkedin.png" alt="linkedin" />
 				</a>
 			</FooterItem>
 			<Text>|</Text>

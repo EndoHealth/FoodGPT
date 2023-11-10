@@ -62,9 +62,9 @@ export default class MyDocument extends Document {
 		return (
 			<Html>
 				<Head>
-					{/* <script async src={this.GTAG_SRC}></script>
+					<script async src={this.GTAG_SRC}></script>
 					<script dangerouslySetInnerHTML={this.setGoogleTags()} />
-					<script dangerouslySetInnerHTML={this.setHotjarTags()} /> */}
+					<script dangerouslySetInnerHTML={this.setHotjarTags()} />
 				</Head>
 				<body>
 					<Main />
