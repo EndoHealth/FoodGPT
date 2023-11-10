@@ -51,9 +51,10 @@ const index = () => {
 			.post(`${API_URL}/vision`, { image })
 			.then((res) => {
 				setLoading(false);
-				setResult(res.data);
+				console.log(res.data);
+				setResult(JSON.stringify(res.data));
 				uploadPhotoSuccess();
-				router.push('/result');
+				// router.push('/result');
 			})
 			.catch((err) => {
 				uploadPhotoFailure();
@@ -135,4 +136,5 @@ const LoadingSpinner = styled.img`
 	cursor: pointer;
 	width: 2rem;
 	height: 2rem;
+	margin-top: 2rem;
 `;

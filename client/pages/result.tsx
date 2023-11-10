@@ -3,20 +3,24 @@ import styled from 'styled-components';
 import { palette } from 'common/styles';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { resultState, imageState } from 'recoil/atoms';
+import { resultState, imageState, commentState } from 'recoil/atoms';
 import { insertEmailToSupabase } from 'utils/supabase';
 import { saveEmail, sendEmail, viewResult } from 'utils';
+import { blueGrey, red } from '../common/styles/palette';
+import { Footer } from 'components';
 
 const Result = () => {
 	const router = useRouter();
 	const [result, setResult] = useRecoilState(resultState);
+	const [comment, setComment] = useRecoilState(commentState);
 	const [image, setImage] = useRecoilState(imageState);
 	const [hasEmail, setHasEmail] = useState<boolean>(true);
 	const [email, setEmail] = useState<string>('');
-	const [isSaved, setIsSaved] = useState<boolean>(true);
+	const [isSaved, setIsSaved] = useState<boolean>(false);
 
 	useEffect(() => {
 		viewResult(result);
+		console.log(result);
 
 		if (!!localStorage.getItem('email')) {
 			setHasEmail(true);
@@ -41,6 +45,29 @@ const Result = () => {
 		setIsSaved(true);
 	};
 
+	const getIngredients = (result: string) => {
+		if (result == '') return [];
+		const jsonResult = JSON.parse(result);
+		const ingredients = jsonResult.ingredients;
+		return ingredients;
+	};
+
+	const classifyCalorie = (calorie: string) => {
+		if (!calorie || calorie == '') return 'white';
+		console.log(calorie);
+		const maxCalories = String(calorie).includes('-')
+			? parseInt(calorie.split('-').pop())
+			: parseInt(calorie);
+
+		if (maxCalories < 100) {
+			return palette.grey[200];
+		} else if (maxCalories >= 100 && maxCalories <= 300) {
+			return palette.blueGrey[200];
+		} else {
+			return palette.red[200];
+		}
+	};
+
 	return (
 		<Div>
 			{!hasEmail && (
@@ -57,12 +84,35 @@ const Result = () => {
 					</ModalForm>
 				</ModalContainer>
 			)}
-			<Title>Your Food</Title>
-			<OriginalImage src={image} alt="Uploaded" width={200} />
-			<Text>{result}</Text>
-			<HoverButton onClick={() => handleSaveResults()}>
-				Save Results
-			</HoverButton>
+			{image && <OriginalImage src={image} alt="Uploaded" width={200} />}
+			{comment !== '' && (
+				<>
+					<Title>Comment</Title>
+					<CommentContainer>
+						<CommentText>{comment}</CommentText>
+					</CommentContainer>
+				</>
+			)}
+			{result !== '' && (
+				<>
+					<Title>Ingredients</Title>
+					<IngredientsContainer>
+						{getIngredients(result).map((ingredient) => (
+							<SingleIngredientContainer
+								backgroundColor={classifyCalorie(ingredient.estimated_calories)}
+							>
+								<IngredientText>
+									{ingredient.ingredient.replace(/\s*\([^)]*\)/g, '')}
+								</IngredientText>
+								<CalorieText>{ingredient.estimated_calories} kcal</CalorieText>
+							</SingleIngredientContainer>
+						))}
+					</IngredientsContainer>
+				</>
+			)}
+			<HoverButtonContainer onClick={() => handleSaveResults()}>
+				<HoverButton>Save Results</HoverButton>
+			</HoverButtonContainer>
 			{isSaved && (
 				<SaveModalContainer onClick={(e) => e.stopPropagation()}>
 					<SaveModalInner>
@@ -79,6 +129,8 @@ const Result = () => {
 					</SaveModalInner>
 				</SaveModalContainer>
 			)}
+			<HomeButton onClick={() => router.push('/')}>⬅️ Back</HomeButton>
+			<Footer />
 		</Div>
 	);
 };
@@ -88,12 +140,15 @@ export default Result;
 const Div = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	width: 100%;
 	height: 100%;
 	position: relative;
 	z-index: 1;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	padding: 20px 0 80px 0;
 `;
 const ModalContainer = styled.div`
 	position: fixed;
@@ -172,18 +227,91 @@ const Title = styled.h2`
 	font-family: 'Pretendard';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 2.5rem;
-	line-height: 2.5rem;
+	font-size: 2rem;
+	line-height: 2rem;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
 	text-align: center;
 	color: ${palette.black};
-	margin-bottom: 1rem;
+	margin: 0.5rem auto;
+
+	@media (max-width: 800px) {
+		margin-left: 20px;
+	}
 `;
 const OriginalImage = styled.img`
-	width: 10rem;
-	height: 10rem;
+	width: 15rem;
+	height: 15rem;
 	object-fit: contain;
 `;
-const Text = styled.p`
+const CommentContainer = styled.div`
+	display: flex;
+	width: calc(100% - 40px);
+	height: auto;
+	min-height: 40px;
+	margin: 10px auto 20px auto;
+	padding: 10px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	border: 1px solid black;
+	background-color: white;
+	cursor: pointer;
+	border-radius: 0.5rem;
+`;
+const CommentText = styled.p`
+	font-family: 'Pretendard';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1rem;
+	line-height: 1.5rem;
+	text-align: center;
+	color: ${palette.black};
+	margin: 0.5rem auto;
+`;
+const IngredientsContainer = styled.div`
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+
+	@media (max-width: 800px) {
+		display: flex;
+	}
+`;
+const SingleIngredientContainer = styled.div<{ backgroundColor: string }>`
+	display: flex;
+	width: calc(100% - 40px);
+	height: auto;
+	min-height: 40px;
+	margin: 10px auto;
+	padding: 10px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	border: 1px solid black;
+	background-color: ${(props) => props.backgroundColor};
+	cursor: pointer;
+	border-radius: 0.5rem;
+`;
+const IngredientText = styled.p`
+	font-family: 'Pretendard';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1rem;
+	line-height: 1.5rem;
+	text-align: center;
+	color: ${palette.black};
+	margin: 0.5rem auto;
+`;
+const CalorieText = styled.p`
 	font-family: 'Pretendard';
 	font-style: normal;
 	font-weight: 400;
@@ -191,7 +319,20 @@ const Text = styled.p`
 	line-height: 1rem;
 	text-align: center;
 	color: ${palette.black};
-	margin-bottom: 1rem;
+	margin: 0.5rem auto;
+`;
+const HoverButtonContainer = styled.div`
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	height: 80px;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
 `;
 const HoverButton = styled.button`
 	position: fixed;
@@ -209,7 +350,7 @@ const HoverButton = styled.button`
 	color: white;
 	cursor: pointer;
 	border-radius: 0.5rem;
-	z-index: 2;
+	z-index: 3;
 	font-size: 1rem;
 	font-weight: 400;
 
@@ -273,6 +414,23 @@ const SaveModalButton = styled.button`
 	background-color: ${palette.brand.primary};
 	color: white;
 	cursor: pointer;
+	border-radius: 0.5rem;
+	font-size: 1rem;
+	font-weight: 400;
+`;
+const HomeButton = styled.button`
+	width: 100%;
+	height: 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	border: none;
+	background-color: white;
+	color: black;
+	cursor: pointer;
+	margin: 10px 0;
 	border-radius: 0.5rem;
 	font-size: 1rem;
 	font-weight: 400;

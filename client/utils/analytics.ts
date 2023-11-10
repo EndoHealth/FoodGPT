@@ -16,36 +16,51 @@ const setUserProperties = () => {
 };
 
 export const viewHome = () => {
-	setUserProperties();
-	window.gtag('event', 'view_home', {});
+	// setUserProperties();
+	// window.gtag('event', 'view_home', {});
 };
 
 export const uploadPhotoInit = () => {
-	setUserProperties();
-	window.gtag('event', 'upload_photo_init', {});
+	// setUserProperties();
+	// window.gtag('event', 'upload_photo_init', {});
 };
 
 export const uploadPhotoSuccess = () => {
-	setUserProperties();
-	window.gtag('event', 'upload_photo_success', {});
+	// setUserProperties();
+	// window.gtag('event', 'upload_photo_success', {});
 };
 
 export const uploadPhotoFailure = () => {
-	setUserProperties();
-	window.gtag('event', 'upload_photo_failure', {});
+	// setUserProperties();
+	// window.gtag('event', 'upload_photo_failure', {});
 };
 
 export const saveEmail = () => {
-	setUserProperties();
-	window.gtag('event', 'save_email', {});
+	// setUserProperties();
+	// window.gtag('event', 'save_email', {});
 };
 
 export const viewResult = (result) => {
-	setUserProperties();
-	window.gtag('event', 'view_result', { result: result });
+	// setUserProperties();
+	// window.gtag('event', 'view_result', { result: result });
 };
 
 export const sendEmail = (email) => {
-	setUserProperties();
-	window.gtag('event', 'send_email', { email: email });
+	// setUserProperties();
+	// window.gtag('event', 'send_email', { email: email });
+};
+
+export const touchFooterTwitter = () => {
+	// setUserProperties();
+	// window.gtag('event', 'touch_footer_twitter', {});
+};
+
+export const touchFooterLinkedin = () => {
+	// setUserProperties();
+	// window.gtag('event', 'touch_footer_linkedin', {});
+};
+
+export const touchFooterGithub = () => {
+	// setUserProperties();
+	// window.gtag('event', 'touch_footer_github', {});
 };

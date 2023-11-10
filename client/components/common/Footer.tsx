@@ -2,25 +2,30 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { GITHUB_URL, LINKEDIN_URL, TWITTER_URL } from 'environment';
+import {
+	touchFooterGithub,
+	touchFooterLinkedin,
+	touchFooterTwitter,
+} from 'utils';
 
 export const Footer = ({ color }: { color?: string }) => {
 	const router = useRouter();
 
 	return (
 		<Div color={color}>
-			<FooterItem>
+			<FooterItem onClick={touchFooterTwitter}>
 				<a href={TWITTER_URL} target="_blank">
 					<Icon src="/twitter.png" alt="twitter" />
 				</a>
 			</FooterItem>
 			<Text>|</Text>
-			<FooterItem>
+			<FooterItem onClick={touchFooterLinkedin}>
 				<a href={LINKEDIN_URL} target="_blank">
 					<Icon src="/linkedin.png" alt="linkedin" />
 				</a>
 			</FooterItem>
 			<Text>|</Text>
-			<FooterItem>
+			<FooterItem onClick={touchFooterGithub}>
 				<a href={GITHUB_URL} target="_blank">
 					<Icon src="/github.png" alt="github" />
 				</a>
