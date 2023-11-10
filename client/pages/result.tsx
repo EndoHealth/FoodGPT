@@ -8,6 +8,9 @@ import { insertEmailToSupabase } from 'utils/supabase';
 import { saveEmail, sendEmail, viewResult } from 'utils';
 import { blueGrey, red } from '../common/styles/palette';
 import { Footer } from 'components';
+import axios from 'axios';
+import { API_URL } from 'environment';
+import { createEmailBody } from 'utils/postprocessing';
 
 const Result = () => {
 	const router = useRouter();
@@ -37,10 +40,11 @@ const Result = () => {
 		insertEmailToSupabase(email);
 	};
 
-	const handleSaveResults = () => {
-		alert('hi!');
-
+	const handleSaveResults = async () => {
 		// send email
+		const body = createEmailBody(result, comment);
+		await axios.post(`${API_URL}/email`, { email, body });
+
 		sendEmail(email);
 		setIsSaved(true);
 	};
