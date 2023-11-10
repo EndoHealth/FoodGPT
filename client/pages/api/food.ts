@@ -2,6 +2,16 @@ import OpenAI from 'openai';
 import type { NextApiRequest, NextApiResponse } from 'next';
 const openai = new OpenAI();
 
+export const config = {
+	api: {
+		responseLimit: false,
+		bodyParser: {
+			sizeLimit: '50mb', // Set desired size limit here
+		},
+	},
+	maxDuration: 60,
+};
+
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<any>
