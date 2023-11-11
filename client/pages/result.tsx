@@ -67,9 +67,6 @@ const Result = () => {
 			const jsonResult = JSON.parse(result);
 			const ingredients = jsonResult.ingredients;
 
-			console.log(ingredients);
-			console.log(checkIngredientType(ingredients));
-
 			if (checkIngredientType(ingredients)) return ingredients;
 			else return [];
 		} catch {
@@ -77,12 +74,13 @@ const Result = () => {
 		}
 	};
 
-	const classifyCalorie = (calorie: string) => {
-		if (!calorie || calorie == '') return 'white';
+	const classifyCalorie = (calorie: string | number) => {
+		const calorieString = String(calorie);
+		if (!calorieString || calorieString == '') return 'white';
 
-		const maxCalories = String(calorie).includes('-')
-			? parseInt(calorie.split('-').pop())
-			: parseInt(calorie);
+		const maxCalories = calorieString.includes('-')
+			? parseInt(calorieString.split('-').pop())
+			: parseInt(calorieString);
 
 		if (maxCalories < 100) {
 			return palette.grey[200];
