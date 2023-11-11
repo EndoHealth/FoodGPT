@@ -16,6 +16,7 @@ export default async function handler(
 	res: NextApiResponse<any>
 ) {
 	const { message } = req.body;
+	console.log(`DEBUG: FoodService req ${message}`);
 	const jsonRes = await openai.chat.completions.create({
 		model: 'gpt-3.5-turbo-1106',
 		messages: [
@@ -47,10 +48,7 @@ export default async function handler(
 		max_tokens: 4096,
 	});
 	console.log(
-		`DEBUG: VisionService response ${jsonRes.choices[0].message.content.substring(
-			0,
-			10
-		)}`
+		`DEBUG: FoodService response ${jsonRes.choices[0].message.content}`
 	);
 
 	res.send(jsonRes.choices[0].message.content);

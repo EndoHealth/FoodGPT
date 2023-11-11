@@ -67,6 +67,9 @@ const Result = () => {
 			const jsonResult = JSON.parse(result);
 			const ingredients = jsonResult.ingredients;
 
+			console.log(ingredients);
+			console.log(checkIngredientType(ingredients));
+
 			if (checkIngredientType(ingredients)) return ingredients;
 			else return [];
 		} catch {

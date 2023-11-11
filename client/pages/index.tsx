@@ -35,16 +35,13 @@ const index = () => {
 		axios
 			.post(`/api/vision`, { image })
 			.then((res) => {
-				setLoading(false);
 				setResult(JSON.stringify(res.data));
 
 				axios
-					.get(`/api/food`, {
-						params: { message: JSON.stringify(res.data) },
-					})
+					.post(`/api/food`, { message: JSON.stringify(res.data) })
 					.then((res) => {
-						console.log(res.data);
 						setComment(JSON.stringify(res.data));
+						setLoading(false);
 						uploadPhotoSuccess();
 						router.push('/result');
 					});

@@ -100,11 +100,12 @@ export function checkIngredientType(
 	return ingredients.every(
 		(item) =>
 			typeof item.ingredient === 'string' &&
-			typeof item.estimated_calories === 'string'
+			(typeof item.estimated_calories === 'string' ||
+				typeof item.estimated_calories === 'number')
 	);
 }
 
 interface Ingredient {
 	ingredient: string;
-	estimated_calories: string;
+	estimated_calories: string | number;
 }
