@@ -53,6 +53,11 @@ const Result = () => {
 		setIsSaved(true);
 	};
 
+	const handleBack = () => {
+		setImage(null);
+		router.push('/');
+	};
+
 	const getIngredients = (result: string) => {
 		try {
 			const jsonResult = JSON.parse(result);
@@ -141,7 +146,7 @@ ${JSON.parse(comment).analysis}`}</CommentText>
 					</SaveModalInner>
 				</SaveModalContainer>
 			)}
-			<HomeButton onClick={() => router.push('/')}>⬅️ Back</HomeButton>
+			<HomeButton onClick={handleBack}>⬅️ Back</HomeButton>
 			<Footer />
 		</Div>
 	);
