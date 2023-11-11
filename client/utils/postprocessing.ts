@@ -93,3 +93,18 @@ ${jsonComment.analysis}`;
 
 ${ingredientsText}`;
 };
+
+export function checkIngredientType(
+	ingredients: any[]
+): ingredients is Ingredient[] {
+	return ingredients.every(
+		(item) =>
+			typeof item.ingredient === 'string' &&
+			typeof item.estimated_calories === 'string'
+	);
+}
+
+interface Ingredient {
+	ingredient: string;
+	estimated_calories: string;
+}

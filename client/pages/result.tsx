@@ -7,7 +7,11 @@ import { resultState, imageState, commentState } from 'recoil/atoms';
 import { insertEmailToSupabase } from 'utils/supabase';
 import { saveEmail, sendEmail, viewResult } from 'utils';
 import { Footer } from 'components';
-import { createEmailBody, getRoasted } from 'utils/postprocessing';
+import {
+	checkIngredientType,
+	createEmailBody,
+	getRoasted,
+} from 'utils/postprocessing';
 
 const Result = () => {
 	const router = useRouter();
@@ -62,7 +66,9 @@ const Result = () => {
 		try {
 			const jsonResult = JSON.parse(result);
 			const ingredients = jsonResult.ingredients;
-			return ingredients;
+
+			if (checkIngredientType(ingredients)) return ingredients;
+			else return [];
 		} catch {
 			return [];
 		}
@@ -114,16 +120,27 @@ ${JSON.parse(comment).analysis}`}</CommentText>
 				<>
 					<Title>Ingredients</Title>
 					<IngredientsContainer>
-						{getIngredients(result).map((ingredient) => (
-							<SingleIngredientContainer
-								backgroundColor={classifyCalorie(ingredient.estimated_calories)}
-							>
-								<IngredientText>
-									{ingredient.ingredient.replace(/\s*\([^)]*\)/g, '')}
-								</IngredientText>
-								<CalorieText>{ingredient.estimated_calories} kcal</CalorieText>
-							</SingleIngredientContainer>
-						))}
+						{getIngredients(result).length > 0 ? (
+							getIngredients(result).map((ingredient) => (
+								<SingleIngredientContainer
+									backgroundColor={classifyCalorie(
+										ingredient.estimated_calories
+									)}
+								>
+									<IngredientText>
+										{ingredient.ingredient.replace(/\s*\([^)]*\)/g, '')}
+									</IngredientText>
+									<CalorieText>
+										{ingredient.estimated_calories} kcal
+									</CalorieText>
+								</SingleIngredientContainer>
+							))
+						) : (
+							<IngredientText>
+								The image does not seem to play well with GPT Vision. Please try
+								again.
+							</IngredientText>
+						)}
 					</IngredientsContainer>
 				</>
 			)}
