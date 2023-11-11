@@ -8,9 +8,11 @@ import { insertEmailToSupabase } from 'utils/supabase';
 import { saveEmail, sendEmail, viewResult } from 'utils';
 import { Footer } from 'components';
 import {
-	checkIngredientType,
+	classifyCalorie,
 	createEmailBody,
 	getRoasted,
+	parseComment,
+	parseResult,
 } from 'utils/postprocessing';
 
 const Result = () => {
@@ -62,35 +64,6 @@ const Result = () => {
 		router.push('/');
 	};
 
-	const getIngredients = (result: string) => {
-		try {
-			const jsonResult = JSON.parse(result);
-			const ingredients = jsonResult.ingredients;
-
-			if (checkIngredientType(ingredients)) return ingredients;
-			else return [];
-		} catch {
-			return [];
-		}
-	};
-
-	const classifyCalorie = (calorie: string | number) => {
-		const calorieString = String(calorie);
-		if (!calorieString || calorieString == '') return 'white';
-
-		const maxCalories = calorieString.includes('-')
-			? parseInt(calorieString.split('-').pop())
-			: parseInt(calorieString);
-
-		if (maxCalories < 100) {
-			return palette.grey[200];
-		} else if (maxCalories >= 100 && maxCalories <= 300) {
-			return palette.blueGrey[200];
-		} else {
-			return palette.red[200];
-		}
-	};
-
 	return (
 		<Div>
 			{!hasEmail && (
@@ -112,17 +85,16 @@ const Result = () => {
 				<>
 					<Title>Comment</Title>
 					<CommentContainer>
-						<CommentText>{`${getRoasted(JSON.parse(comment).healthy)}
-${JSON.parse(comment).analysis}`}</CommentText>
+						<CommentText>{parseComment(comment)}</CommentText>
 					</CommentContainer>
 				</>
 			)}
 			{result !== '' && (
 				<>
 					<Title>Ingredients</Title>
-					<IngredientsContainer>
-						{getIngredients(result).length > 0 ? (
-							getIngredients(result).map((ingredient) => (
+					{parseResult(result).length > 0 ? (
+						<IngredientsContainer>
+							{parseResult(result).map((ingredient) => (
 								<SingleIngredientContainer
 									backgroundColor={classifyCalorie(
 										ingredient.estimated_calories
@@ -135,14 +107,14 @@ ${JSON.parse(comment).analysis}`}</CommentText>
 										{ingredient.estimated_calories} kcal
 									</CalorieText>
 								</SingleIngredientContainer>
-							))
-						) : (
-							<IngredientText>
-								The image does not seem to play well with GPT Vision. Please try
-								again.
-							</IngredientText>
-						)}
-					</IngredientsContainer>
+							))}
+						</IngredientsContainer>
+					) : (
+						<IngredientText>
+							The image does not seem to play well with GPT Vision. GPT is
+							non-deterministic, so please try again.
+						</IngredientText>
+					)}
 				</>
 			)}
 			<HoverButtonContainer onClick={() => handleSaveResults()}>

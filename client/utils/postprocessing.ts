@@ -1,3 +1,99 @@
+import { palette } from 'common/styles';
+
+export const createEmailBody = (comment: string, result: any) => {
+	var commentText = parseComment(comment);
+	var parsedResult = parseResult(result);
+
+	var ingredientsText = '';
+	parsedResult.forEach((ingredient: any) => {
+		ingredientsText += `${ingredient.ingredient} (${ingredient.estimated_calories})\n`;
+	});
+
+	return `${commentText}
+${ingredientsText}`;
+};
+
+export function parseResult(result: string) {
+	try {
+		const jsonResult = JSON.parse(result);
+
+		// Helper function to find a key in the object based on partial keys
+		function findKey(object, partialKeys) {
+			for (const key of Object.keys(object)) {
+				if (
+					partialKeys.some((partialKey) =>
+						key.toLowerCase().includes(partialKey)
+					)
+				) {
+					return object[key];
+				}
+			}
+			return '';
+		}
+
+		// Assuming the input JSON has one key-value pair, and the value is the target array
+		const targetArray = Object.values(jsonResult)[0] as Array<any>;
+
+		// New array to store parsed items
+		var parsedArray = [];
+
+		targetArray.forEach((item) => {
+			// Find the ingredient and calorie values with flexible key matching
+			const ingredient = findKey(item, [
+				'items',
+				'item',
+				'ingredient',
+				'ingredients',
+			]);
+			const estimatedCalories = findKey(item, [
+				'estimated_calories',
+				'estimated_calorie',
+				'calories',
+				'calorie',
+			]);
+
+			// Add to the new array
+			parsedArray.push({
+				ingredient: ingredient,
+				estimated_calories: estimatedCalories,
+			});
+		});
+
+		return parsedArray;
+	} catch {
+		return [];
+	}
+}
+
+export const classifyCalorie = (calorie: string | number) => {
+	const calorieString = String(calorie);
+	if (!calorieString || calorieString == '') return 'white';
+
+	const maxCalories = calorieString.includes('-')
+		? parseInt(calorieString.split('-').pop())
+		: parseInt(calorieString);
+
+	if (maxCalories < 100) {
+		return palette.grey[200];
+	} else if (maxCalories >= 100 && maxCalories <= 300) {
+		return palette.blueGrey[200];
+	} else {
+		return palette.red[200];
+	}
+};
+
+export const parseComment = (comment: string) => {
+	const jsonComment = JSON.parse(comment);
+
+	if (!jsonComment.healthy || !jsonComment.analysis)
+		return `The image does not seem to play well with GPT Vision. GPT is non-deterministic, so please try again.`;
+
+	const roast = getRoasted(JSON.parse(comment).healthy);
+	const analysis = JSON.parse(comment).analysis;
+	return `${roast}
+${analysis}`;
+};
+
 export const getRoasted = (healthy: string) => {
 	if (healthy.toLowerCase().trim() === 'bad') {
 		return bad_list[Math.floor(Math.random() * bad_list.length)];
@@ -76,36 +172,3 @@ const good_list = [
 	"That's a lot of leafy greens. Compensating for something? 🌿😜",
 	"Congrats on the healthy meal, what's your prize? A gold star? 🌟🥦",
 ];
-
-export const createEmailBody = (comment: string, result: any) => {
-	const jsonComment = JSON.parse(comment);
-	var commentText = `${getRoasted(jsonComment.healthy)}
-${jsonComment.analysis}`;
-
-	var ingredientsText = '';
-	const jsonResult = JSON.parse(result);
-	const ingredients = jsonResult.ingredients;
-	ingredients.forEach((ingredient: any) => {
-		ingredientsText += `${ingredient.ingredient} (${ingredient.estimated_calories})\n`;
-	});
-
-	return `${commentText}
-
-${ingredientsText}`;
-};
-
-export function checkIngredientType(
-	ingredients: any[]
-): ingredients is Ingredient[] {
-	return ingredients.every(
-		(item) =>
-			typeof item.ingredient === 'string' &&
-			(typeof item.estimated_calories === 'string' ||
-				typeof item.estimated_calories === 'number')
-	);
-}
-
-interface Ingredient {
-	ingredient: string;
-	estimated_calories: string | number;
-}
