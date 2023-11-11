@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { palette } from 'common/styles';
 import axios from 'axios';
@@ -16,28 +16,11 @@ import {
 
 const index = () => {
 	const router = useRouter();
+	const inputRef = useRef(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [result, setResult] = useRecoilState(resultState);
 	const [image, setImage] = useRecoilState(imageState);
 	const [comment, setComment] = useRecoilState(commentState);
-
-	const handleImageClick = () => {
-		const input = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'image/*,capture=camera';
-
-		input.onchange = (e) => {
-			const file = (e.target as HTMLInputElement).files[0];
-
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onloadend = () => {
-				setImage(reader.result);
-			};
-		};
-
-		input.click();
-	};
 
 	useEffect(() => {
 		viewHome();
@@ -76,18 +59,40 @@ const index = () => {
 	return (
 		<Div>
 			<Title>FoodGPT</Title>
+			<Divider height="1rem" />
 			<Description>Your automated food diary</Description>
+			<Divider height="0.5rem" />
 
 			{image ? (
 				<Image src={image} alt="Uploaded" width={200} />
 			) : (
-				<ImageButton onClick={handleImageClick}>
+				<ImageButton onClick={() => inputRef.current?.click()}>
 					<img src={'/camera.png'} />
+					<input
+						ref={inputRef}
+						type="file"
+						accept="image/*;capture=camera"
+						onChange={(e) => {
+							const file = e.currentTarget.files[0];
+
+							if (file) {
+								const reader = new FileReader();
+								reader.readAsDataURL(file);
+								reader.onloadend = () => {
+									setImage(reader.result);
+								};
+							}
+						}}
+						style={{ display: 'none' }}
+					/>
 				</ImageButton>
 			)}
 
 			{loading && <LoadingSpinner src={'/loading.gif'} alt="" />}
-
+			<Divider height="0.5rem" />
+			<Description fontSize={'1rem'}>
+				We do not save any of the images.
+			</Description>
 			<Footer />
 		</Div>
 	);
@@ -105,6 +110,11 @@ export const Div = styled.div`
 	background-color: white;
 	color: black;
 `;
+const Divider = styled.div<{ height: string }>`
+	display: flex;
+	width: 100%;
+	height: ${(props) => props.height};
+`;
 const Title = styled.h2`
 	font-family: 'Pretendard';
 	font-style: normal;
@@ -113,17 +123,16 @@ const Title = styled.h2`
 	line-height: 2.5rem;
 	text-align: center;
 	color: ${palette.black};
-	margin-bottom: 1rem;
 `;
-const Description = styled.p`
+const Description = styled.p<{ fontSize?: string }>`
 	font-family: 'Pretendard';
 	font-style: normal;
 	font-weight: 400;
 	font-size: 1.5rem;
-	line-height: 1.5rem;
+	font-size: ${(props) => (props.fontSize ? props.fontSize : '1.5rem')};
+	line-height: ${(props) => (props.fontSize ? props.fontSize : '1.5rem')};
 	text-align: center;
 	color: ${palette.black};
-	margin-bottom: 1rem;
 `;
 const ImageButton = styled.button`
 	background: transparent;
@@ -141,8 +150,7 @@ const ImageButton = styled.button`
 	}
 
 	@media (max-width: 800px) {
-		width: calc(100% - 40px);
-		margin: 20px 0;
+		width: calc(100% - 120px);
 	}
 `;
 const Image = styled.img`

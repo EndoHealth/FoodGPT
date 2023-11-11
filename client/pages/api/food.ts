@@ -4,12 +4,11 @@ const openai = new OpenAI();
 
 export const config = {
 	api: {
-		responseLimit: false,
 		bodyParser: {
 			sizeLimit: '50mb', // Set desired size limit here
 		},
 	},
-	maxDuration: 60,
+	maxDuration: 200,
 };
 
 export default async function handler(

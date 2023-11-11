@@ -45,7 +45,11 @@ const Result = () => {
 		const content = createEmailBody(comment, result);
 
 		// copy content to clipboard
-		navigator.clipboard.writeText(content);
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(content);
+		} else {
+			alert('Failed to copy to clipboard');
+		}
 
 		sendEmail(email);
 		setImage(null);
@@ -53,10 +57,13 @@ const Result = () => {
 	};
 
 	const getIngredients = (result: string) => {
-		if (result == '') return [];
-		const jsonResult = JSON.parse(result);
-		const ingredients = jsonResult.ingredients;
-		return ingredients;
+		try {
+			const jsonResult = JSON.parse(result);
+			const ingredients = jsonResult.ingredients;
+			return ingredients;
+		} catch {
+			return [];
+		}
 	};
 
 	const classifyCalorie = (calorie: string) => {
