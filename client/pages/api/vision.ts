@@ -67,12 +67,22 @@ export default async function handler(
 				content: [
 					{
 						type: 'text',
-						text: `Please respond with the following in Json format. 
+						text: `Look at the content and respond by changing it to match the JSON format.
 							   ''' contents
 							   ${message} 
 							   '''
 
-							   ''' example json format
+							   Return the data as JSON in the following format:
+							   ''' json format
+							    {
+									"ingredients": [
+										"ingredient": string,
+										"estimated_calories": string
+									]
+							    }
+							   '''
+							   
+							   ''' example response format
 							   {
 								"ingredients": [
 								  {
@@ -105,7 +115,7 @@ export default async function handler(
 								  },
 								  {
 									"ingredient": "Falafel patties",
-									"estimated_calories": 57 * quantity_of_falafel  // assuming one falafel patty has around 57 calories
+									"estimated_calories": 57
 								  },
 								  {
 									"ingredient": "Sprouts",
@@ -113,7 +123,7 @@ export default async function handler(
 								  },
 								  {
 									"ingredient": "Salad dressing",
-									"estimated_calories": 70  // assuming 1 tablespoon of a commonly used dressing
+									"estimated_calories": 70
 								  }
 								]
 							  }
