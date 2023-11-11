@@ -8,9 +8,8 @@ export const config = {
 			sizeLimit: '50mb', // Set desired size limit here
 		},
 	},
-	maxDuration: 60,
+	maxDuration: 300,
 };
-export const maxDuration = 60;
 
 export default async function handler(
 	req: NextApiRequest,
