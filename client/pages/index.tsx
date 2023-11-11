@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { palette } from 'common/styles';
 import axios from 'axios';
-import { API_URL } from 'environment';
 import { Footer } from 'components';
 import { commentState, imageState, resultState } from 'recoil/atoms';
 import { useRecoilState } from 'recoil';
