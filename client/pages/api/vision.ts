@@ -5,7 +5,7 @@ const openai = new OpenAI();
 export const config = {
 	api: {
 		bodyParser: {
-			sizeLimit: '50mb', // Set desired size limit here
+			sizeLimit: '50mb',
 		},
 	},
 	maxDuration: 200,
